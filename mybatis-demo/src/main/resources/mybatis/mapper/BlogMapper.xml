@@ -1,0 +1,102 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imhuis.code.examples.mybatis.mapper.BlogMapper">
+
+    <!-- 内联resultMap -->
+    <resultMap id="detailedBlogInfo" type="com.imhuis.code.examples.mybatis.entity.DetailedBlog">
+        <constructor>
+            <idArg column="id" javaType="int"/>
+        </constructor>
+        <result property="blogTitle" javaType="string" column="blog_title"/>
+        <result property="blogUrl" javaType="string" column="blog_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="author" javaType="com.imhuis.code.examples.mybatis.entity.Author">
+            <id property="id" column="author_id"/>
+            <result property="username" column="username"/>
+            <result property="password" column="password"/>
+            <result property="email" column="email"/>
+            <result property="bio" column="bio"/>
+            <result property="createTime" column="create_time"/>
+            <result property="updateTime" column="update_time"/>
+        </association>
+    </resultMap>
+
+    <select id="queryDetailedBlog" resultMap="detailedBlogInfo">
+        SELECT *
+        FROM t_blog AS B
+                 LEFT JOIN t_author AS A
+                    ON B.author_id = A.id
+        WHERE B.id = #{blogId}
+    </select>
+
+    <!-- 引用resultMap -->
+    <resultMap id="quoteDetailedBolg" type="com.imhuis.code.examples.mybatis.entity.DetailedBlog">
+        <constructor>
+            <idArg column="id" javaType="int"/>
+        </constructor>
+        <result property="blogTitle" javaType="string" column="blog_title"/>
+        <result property="blogUrl" javaType="string" column="blog_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="author" column="author_id" resultMap="com.imhuis.code.examples.mybatis.mapper.AuthorMapper.author"/>
+    </resultMap>
+
+    <select id="queryDetailedBlogWithQuote" resultMap="quoteDetailedBolg">
+        SELECT B.*,
+               A.id AS author_id, A.username, A.password, A.email, A.bio,
+               A.create_time AS author_create_time, A.update_time AS author_update_time
+        FROM t_blog AS B
+                 LEFT JOIN t_author AS A
+                           ON B.author_id = A.id
+        WHERE B.id = #{blogId}
+    </select>
+
+    <!-- 延迟加载的方式 -->
+    <resultMap id="lazyDetailedBolg" type="com.imhuis.code.examples.mybatis.entity.DetailedBlog">
+        <constructor>
+            <idArg column="id" javaType="int"/>
+        </constructor>
+        <result property="blogTitle" javaType="string" column="blog_title"/>
+        <result property="blogUrl" javaType="string" column="blog_url"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="author" column="author_id"
+                     javaType="com.imhuis.code.examples.mybatis.entity.Author" select="com.imhuis.code.examples.mybatis.mapper.AuthorMapper.selectById" fetchType="lazy"/>
+    </resultMap>
+
+    <select id="queryDetailedBlogWithLazy" resultMap="lazyDetailedBolg">
+        SELECT B.*
+        FROM t_blog AS B
+        WHERE B.id = #{blogId}
+    </select>
+
+    <resultMap id="cascadeDetailedBlogInfo" type="com.imhuis.code.examples.mybatis.entity.DetailedBlog">
+        <id property="id" column="id"/>
+        <result property="blogTitle" javaType="string" column="blog_title"/>
+        <result property="blogUrl" javaType="string" column="blog_url"/>
+        <result property="author.id" column="author_id"/>
+        <result property="author.username" column="username"/>
+        <result property="author.username" column="username"/>
+        <result property="author.password" column="password"/>
+        <result property="author.email" column="email"/>
+        <result property="author.bio" column="bio"/>
+        <result property="author.createTime" column="create_time1"/>
+        <result property="author.updateTime" column="update_time1"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="queryDetailedBlogWithCascade" resultMap="cascadeDetailedBlogInfo">
+        SELECT B.*,
+               A.id AS author_id, A.username, A.password, A.email, A.bio,
+               A.create_time AS create_time1, A.update_time AS update_time1
+        FROM t_blog AS B
+                 LEFT JOIN t_author AS A
+                           ON B.author_id = A.id
+        WHERE B.id = #{blogId}
+    </select>
+
+</mapper>

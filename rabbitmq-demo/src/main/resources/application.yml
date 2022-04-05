@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev1
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: password
+    virtual-host: /test
+    template:
+      retry:
+        enabled: true
+        interval: 5000
+        max-attempts: 3
+        max-interval: 10000
+        multiplier: 2
+      exchange: test-exchange

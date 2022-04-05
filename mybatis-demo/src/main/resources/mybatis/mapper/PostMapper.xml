@@ -1,0 +1,52 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.imhuis.code.examples.mybatis.mapper.PostMapper">
+
+    <resultMap id="post" type="com.imhuis.code.examples.mybatis.entity.Post">
+        <id property="id" column="id"/>
+        <result property="blogId" column="blog_id"/>
+        <result property="subject" column="subject"/>
+        <result property="content" column="content"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <select id="queryPostsByBlogId" resultMap="post">
+        SELECT *
+        FROM t_post WHERE blog_id = #{blogId}
+    </select>
+
+    <!-- 集合的嵌套结果映射 -->
+    <resultMap id="blogPost" type="com.imhuis.code.examples.mybatis.entity.BlogPosts">
+        <id property="id" column="id"/>
+        <result property="blogTitle" column="blog_title"/>
+        <result property="blogUrl" column="blog_url"/>
+        <collection property="posts" javaType="ArrayList" column="blog_id"
+                    ofType="com.imhuis.code.examples.mybatis.entity.Post" resultMap="post" columnPrefix="post_"/>
+    </resultMap>
+    <select id="queryPostByBlogId" resultMap="blogPost">
+        SELECT B.*,
+               P.id AS post_id, P.blog_id AS post_blog_id,
+               P.subject AS post_subject, P.content AS post_content,
+               P.create_time AS post_create_time, P.update_time AS post_update_time
+        FROM t_blog AS B
+                 LEFT JOIN t_post AS P ON B.id = P.blog_id
+        WHERE B.id = #{blogId}
+    </select>
+
+    <!-- 集合的嵌套 Select 查询 -->
+    <resultMap id="lazyBlogPost" type="com.imhuis.code.examples.mybatis.entity.BlogPosts">
+        <id property="id" column="id"/>
+        <result property="blogTitle" column="blog_title"/>
+        <result property="blogUrl" column="blog_url"/>
+        <collection property="posts" javaType="ArrayList" column="id"
+                    ofType="com.imhuis.code.examples.mybatis.entity.Post" select="queryPostsByBlogId" fetchType="lazy"/>
+    </resultMap>
+    <select id="queryPostByBlogIdWithLazy" resultMap="lazyBlogPost">
+        SELECT B.*
+        FROM t_blog AS B
+    </select>
+
+</mapper>
