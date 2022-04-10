@@ -29,6 +29,7 @@
         <module>elastic-demo</module>
         <module>rabbitmq-demo</module>
         <module>mybatis-demo</module>
+        <module>shardingsphere-example</module>
     </modules>
 
     <dependencies>
