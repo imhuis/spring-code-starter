@@ -20,12 +20,6 @@ configurations {
     }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven("https://maven.aliyun.com/repository/central")
-}
-
 dependencies {
     implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
     compileOnly("org.projectlombok:lombok")

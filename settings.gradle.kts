@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 rootProject.name = "spring-demo"
 
 pluginManagement {
@@ -21,6 +23,11 @@ dependencyResolutionManagement {
 include("spring-web")
 include("spring-reactive-web")
 include("spring-datasource")
+include("spring-rabbitmq")
 include("spring-redis")
 include("spring-mybatis")
 include("spring-graphql")
+include("commons")
+
+
+println("SETTINGS FILE: This is executed during the initialization phase")

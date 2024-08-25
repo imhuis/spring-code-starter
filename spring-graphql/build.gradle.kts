@@ -25,25 +25,29 @@ configurations {
     }
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven("https://maven.aliyun.com/repository/central")
+dependencyManagement {
+    imports {
+        mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release")
+    }
 }
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation("org.springframework.integration:spring-integration-websocket")
+    implementation("com.netflix.graphql.dgs.codegen:graphql-dgs-codegen-gradle:6.2.1")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework:spring-webflux")
     testImplementation("org.springframework.graphql:spring-graphql-test")
+    "developmentOnly"("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.generateJava {
-    schemaPaths.add("${projectDir}/src/main/resources/graphql-client")
+    schemaPaths.add("${projectDir}/src/main/resources/graphql")
     packageName = "com.zyixh.code.springgraphql.codegen"
     generateClient = true
 }
